@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs'
 let json_data;
 let new_json_data  = {};
 
