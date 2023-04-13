@@ -1,5 +1,6 @@
 import { Server } from "node-osc";
 import "dotenv/config";
+
 const OSC_PORT = process.env.OSC_PORT_2;
 const OSC_IP = process.env.OSC_IP;
 

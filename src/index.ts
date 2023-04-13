@@ -2,8 +2,8 @@ import valid_images from "./valid_images.js";
 import messages from "./messages.js";
 import osc_server from "./osc-receiver.js";
 
-import express, { Express, Request, Response } from "express";
 import "dotenv/config";
+import express, { Express, Request, Response } from "express";
 import body_parser from "body-parser";
 import exif from "exif";
 import fs from "fs";
@@ -11,13 +11,14 @@ import path from "path";
 import cors from "cors";
 import { Client } from "node-osc";
 
-const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_2);
+const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_1);
 
 let progress_value: number = 0;
 
 osc_server.on("message", (msg, rinfo) => {
 	if (msg[0] === "/composition/layers/3/clips/1/transport/position") {
 		progress_value = msg[1];
+		// console.log(msg[1]);
 		// console.log(rinfo);
 	}
 });
@@ -109,17 +110,16 @@ app.get("/send/:data", (req, res) => {
 		"/composition/layers/3/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
-			console.log("Message sent, " + req.params.data);
+			console.log(`Message sent, ${req.params.data}`);
 		},
 	);
 	res.send("ok");
-	res.end();
 });
 
 app.get("/osc-info", (req: Request, res: Response) => {
 	// res.send(JSON.stringify({ value: ~~(progress_value * 10 ** 10) }));
-	res.send((~~(progress_value * 10 ** 6)).toString());
-	// res.send(progress_value.toString());
+	// res.send((~~(progress_value * 10 ** 6)).toString());
+	res.send(progress_value.toString());
 });
 
 app.listen(port, () => {
