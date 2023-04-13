@@ -88,8 +88,8 @@ app.use((req, res, next) => {
 
 app.get("/img/:id", async (req: Request, res: Response) => {
 	const img_id = valid_images[parseInt(req.params.id)];
-	if (fs.existsSync(`./images/${img_id}.jpg`)) {
-		res.sendFile(`./images/${img_id}.jpg`, { root: __dirname });
+	if (fs.existsSync(`./opt-images/opt-${img_id}.jpg`)) {
+		res.sendFile(`./opt-images/opt-${img_id}.jpg`, { root: __dirname });
 	} else {
 		res.sendFile("./black.png", { root: __dirname });
 	}
