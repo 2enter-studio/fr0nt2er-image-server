@@ -72,7 +72,7 @@ app.use(body_parser.urlencoded({ extended: true }));
 
 app.use(
 	cors({
-		origin: "http://127.0.0.1:8080",
+		origin: "http://0.0.0.0:8080",
 	}),
 );
 
