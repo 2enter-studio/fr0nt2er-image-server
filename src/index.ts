@@ -1,17 +1,28 @@
 import valid_images from "./valid_images.js";
 import messages from "./messages.js";
+import osc_server from "./osc-receiver.js";
+
 import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import "dotenv/config";
 import body_parser from "body-parser";
 import exif from "exif";
 import fs from "fs";
 import path from "path";
 import cors from "cors";
-// import * as Exif from "exif";
+import { Client } from "node-osc";
+
+const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_2);
+
+let progress_value: number = 0;
+
+osc_server.on("message", (msg, rinfo) => {
+	if (msg[0] === "/composition/layers/3/clips/1/transport/position") {
+		progress_value = msg[1];
+		// console.log(rinfo);
+	}
+});
 
 const __dirname = path.resolve();
-
-dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -63,6 +74,16 @@ app.use(
 	}),
 );
 
+app.use((req, res, next) => {
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader(
+		"Access-Control-Allow-Methods",
+		"OPTIONS, GET, POST, PUT, PATCH, DELETE", // what matters here is that OPTIONS is present
+	);
+	res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	next();
+});
+
 app.get("/img/:id", async (req: Request, res: Response) => {
 	const img_id = valid_images[parseInt(req.params.id)];
 	if (fs.existsSync(`./images/${img_id}.jpg`)) {
@@ -81,6 +102,24 @@ app.get("/imginfo/:id", async (req: Request, res: Response) => {
 		img_metadata.frontier_id = img_id;
 		res.send(JSON.stringify(img_metadata, null, 2));
 	});
+});
+
+app.get("/send/:data", (req, res) => {
+	osc_client.send(
+		"/composition/layers/3/clips/1/transport/position",
+		parseFloat(req.params.data),
+		() => {
+			console.log("Message sent, " + req.params.data);
+		},
+	);
+	res.send("ok");
+	res.end();
+});
+
+app.get("/osc-info", (req: Request, res: Response) => {
+	// res.send(JSON.stringify({ value: ~~(progress_value * 10 ** 10) }));
+	res.send((~~(progress_value * 10 ** 6)).toString());
+	// res.send(progress_value.toString());
 });
 
 app.listen(port, () => {
