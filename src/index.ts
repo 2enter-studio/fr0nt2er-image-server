@@ -17,7 +17,8 @@ let progress_value: number = 0;
 
 osc_server.on("message", (msg, rinfo) => {
 	if (msg[0] === "/composition/layers/3/clips/1/transport/position") {
-		progress_value = msg[1];
+		// progress_value = msg[1];
+		progress_value = (msg[1] * 2512).toFixed(1);
 		// console.log(msg[1]);
 		// console.log(rinfo);
 	}
