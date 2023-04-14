@@ -11,6 +11,8 @@ import path from "path";
 import cors from "cors";
 import { Client } from "node-osc";
 
+const IMG_AMOUNT = 668;
+
 const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_1);
 
 let progress_value: number = 0;
@@ -18,7 +20,7 @@ let progress_value: number = 0;
 osc_server.on("message", (msg, rinfo) => {
 	if (msg[0] === "/composition/layers/3/clips/1/transport/position") {
 		// progress_value = msg[1];
-		progress_value = (msg[1] * 2512).toFixed(1);
+		progress_value = (msg[1] * IMG_AMOUNT).toFixed(1);
 		// console.log(msg[1]);
 		// console.log(rinfo);
 	}
