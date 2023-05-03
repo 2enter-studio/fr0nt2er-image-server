@@ -107,6 +107,13 @@ app.get("/imginfo/:id", async (req: Request, res: Response) => {
 
 app.get("/send/:data", (req, res) => {
 	osc_client.send(
+		"/composition/layers/2/clips/1/transport/position",
+		parseFloat(req.params.data),
+		() => {
+			console.log(`Message sent, ${req.params.data}`);
+		},
+	);
+	osc_client.send(
 		"/composition/layers/3/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
