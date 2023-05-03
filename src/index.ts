@@ -11,18 +11,15 @@ import path from "path";
 import cors from "cors";
 import { Client } from "node-osc";
 
-const IMG_AMOUNT = 668;
+const IMG_AMOUNT = 2512;
 
 const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_1);
 
-let progress_value: number = 0;
+let progress_value: number = 1111;
 
 osc_server.on("message", (msg, rinfo) => {
 	if (msg[0] === "/composition/layers/3/clips/1/transport/position") {
-		// progress_value = msg[1];
 		progress_value = (msg[1] * IMG_AMOUNT).toFixed(1);
-		// console.log(msg[1]);
-		// console.log(rinfo);
 	}
 });
 
@@ -120,9 +117,9 @@ app.get("/send/:data", (req, res) => {
 });
 
 app.get("/osc-info", (req: Request, res: Response) => {
-	// res.send(JSON.stringify({ value: ~~(progress_value * 10 ** 10) }));
-	// res.send((~~(progress_value * 10 ** 6)).toString());
-	res.send(progress_value.toString());
+	res
+		.set({ "content-type": "application/json" })
+		.send(progress_value.toString());
 });
 
 app.listen(port, () => {
