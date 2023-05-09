@@ -15,10 +15,10 @@ const IMG_AMOUNT = 2512;
 
 const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_1);
 
-let progress_value: number = 1111;
+let progress_value: number = 11;
 
 osc_server.on("message", (msg, rinfo) => {
-	if (msg[0] === "/composition/layers/3/clips/1/transport/position") {
+	if (msg[0] === "/composition/layers/2/clips/1/transport/position") {
 		progress_value = (msg[1] * IMG_AMOUNT).toFixed(1);
 	}
 });
@@ -110,6 +110,13 @@ app.get("/imginfo/:id", async (req: Request, res: Response) => {
 
 app.get("/send/:data", (req, res) => {
 	osc_client.send(
+		"/composition/layers/1/clips/1/transport/position",
+		parseFloat(req.params.data),
+		() => {
+			console.log(`Message sent, ${req.params.data}`);
+		},
+	);
+	osc_client.send(
 		"/composition/layers/2/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
@@ -118,13 +125,6 @@ app.get("/send/:data", (req, res) => {
 	);
 	osc_client.send(
 		"/composition/layers/3/clips/1/transport/position",
-		parseFloat(req.params.data),
-		() => {
-			console.log(`Message sent, ${req.params.data}`);
-		},
-	);
-	osc_client.send(
-		"/composition/layers/4/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
 			console.log(`Message sent, ${req.params.data}`);
