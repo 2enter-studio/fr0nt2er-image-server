@@ -33,14 +33,17 @@ const port = process.env.PORT || 3000;
 // if exif parser error return 'exif parser error'
 // else return exif data
 const get_img_metadata_by_id = async (img_id: number) => {
-	if (fs.existsSync(`./images/${img_id}.jpg`)) {
+	if (fs.existsSync(`./opt-images/opt-${img_id}.jpg`)) {
 		return new Promise((resolve) => {
-			fs.readFile(`./images/${img_id}.jpg`, (err: Error, data: File) => {
-				exif(data, (err: Error, data: File) => {
-					if (err) resolve({ error: "exif parser error" });
-					else resolve(data);
-				});
-			});
+			fs.readFile(
+				`./opt-images/opt-${img_id}.jpg`,
+				(err: Error, data: File) => {
+					exif(data, (err: Error, data: File) => {
+						if (err) resolve({ error: "exif parser error" });
+						else resolve(data);
+					});
+				},
+			);
 		});
 	} else {
 		return new Promise((resolve) => {
@@ -115,6 +118,13 @@ app.get("/send/:data", (req, res) => {
 	);
 	osc_client.send(
 		"/composition/layers/3/clips/1/transport/position",
+		parseFloat(req.params.data),
+		() => {
+			console.log(`Message sent, ${req.params.data}`);
+		},
+	);
+	osc_client.send(
+		"/composition/layers/4/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
 			console.log(`Message sent, ${req.params.data}`);
