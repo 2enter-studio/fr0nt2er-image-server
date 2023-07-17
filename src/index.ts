@@ -13,7 +13,15 @@ import { Client } from "node-osc";
 
 const IMG_AMOUNT = 2512;
 
-const osc_client = new Client(process.env.OSC_IP, process.env.OSC_PORT_1);
+const osc_client_1 = new Client(
+	process.env.MAIN_PC_IP,
+	process.env.MAIN_OSC_PORT_INPUT,
+);
+
+// const osc_client_2 = new Client(
+// 	process.env.SUB_PC_IP,
+// 	process.env.SUB_OSC_PORT_INPUT,
+// );
 
 let progress_value: number = 11;
 
@@ -109,21 +117,21 @@ app.get("/imginfo/:id", async (req: Request, res: Response) => {
 });
 
 app.get("/send/:data", (req, res) => {
-	osc_client.send(
+	osc_client_1.send(
 		"/composition/layers/1/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
 			console.log(`Message sent, ${req.params.data}`);
 		},
 	);
-	osc_client.send(
+	osc_client_1.send(
 		"/composition/layers/2/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
 			console.log(`Message sent, ${req.params.data}`);
 		},
 	);
-	osc_client.send(
+	osc_client_1.send(
 		"/composition/layers/3/clips/1/transport/position",
 		parseFloat(req.params.data),
 		() => {
